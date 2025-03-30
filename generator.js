@@ -45,12 +45,12 @@ export class Room{
             &&roomy-margin<=y&&y<roomy+this.height+margin
   }
 
-  bump(room){
+  bump(room,margin=0){
     let b=room.point
     let bx=b.x
     let by=b.y
     for(let x=bx;x<bx+room.width;x+=1) for(let y=by;y<by+room.height;y+=1)
-      if(this.enter(x,y,3)) return true
+      if(this.enter(x,y,margin)) return true
     return false
   }
 }
@@ -65,6 +65,8 @@ export class MapGenerator{
     this.joined=[]
     this.ways=[]//ways that over-lap with rooms are meant to be doors
     this.path=new Path(this)
+    this.margin=3
+    this.turns=[0,3]
   }
 
   turn(){
@@ -99,20 +101,22 @@ export class MapGenerator{
       this.placed.push(r)
       return true
     }
+    let m=this.margin+1
     if(r.point.x==-1){
-      this.turn()
+      let turns=this.turns
+      turns=rpg.roll(turns[0],turns[1])
+      for(let i=0;i<turns;i+=1) this.turn()
       let p=rpg.pick(this.placed)
       let x=p.point.x
       let xs=Array.from(new Array(3),()=>rpg.roll(x-r.width+1,x+p.width-1))
       x=xs.reduce((x1,x2)=>this.seek(x1)<this.seek(x2)?x1:x2)
       r.place(new point.Point(x,this.height-r.height))
-      if(placed.find((room)=>room.bump(r))) throw "can't place new room"
+      if(placed.find((room)=>room.bump(r,m))) throw "can't place new room"
       return true
     }
     let p=r.point
     p.y-=1
-    if(!placed.find((room)=>room.bump(r))) return true
-    // p.y+=3
+    if(!placed.find((room)=>room.bump(r,m))) return true
     placed.push(r)
     return true
   }
@@ -134,7 +138,7 @@ export class MapGenerator{
     joined.push(roomb)
     return true
   }
-1
+
   clean(){
     let ways=this.ways
     for(let point of Array.from(ways)){
