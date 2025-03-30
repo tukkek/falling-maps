@@ -144,8 +144,10 @@ export class MapGenerator{
     return true
   }
 
-  *make(){
+  *watch(){
     while(this.fall()) yield
     while(this.join()) yield
   }
+
+  make(){for(let step of this.watch()) continue}
 }

@@ -66,6 +66,6 @@ export async function ready(){
     generator=new generatorm.MapGenerator(200,200,rooms)
   }
   place(generator)
-  for(let step of generator.make()) await draw(generator)
+  for(let step of generator.watch()) await draw(generator)
   draw(generator,false)
 }
