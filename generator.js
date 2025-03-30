@@ -77,8 +77,7 @@ class MapGenerator{
       return true
     }
     if(r.point.x==-1){
-      let turns=rpg.roll(1,4)-1
-      for(let i=0;i<turns;i+=1) this.turn()
+      this.turn()
       let p=rpg.pick(this.placed)
       let x=p.point.x
       x=rpg.roll(x-r.width+1,x+p.width-1)
