@@ -9,6 +9,20 @@ class Path{
     let graph=Array.from(new Array(w),()=>new Array(h))
     for(let x=0;x<w;x+=1) for(let y=0;y<h;y+=1) graph[x][y]=1
     this.graph=new Graph(graph)
+    this.generator=generator
+  }
+
+  enter(point){return this.generator.rooms.find((r)=>r.enter(point.x,point.y))}
+
+  clean(points){//allows in-door paths only when going from in- to out-side or vice-versa
+    let clean=[]
+    for(let i=0;i<points.length;i++){
+      if((i<points.length-1&&this.enter(points[i])&&!this.enter(points[i+1]))
+          ||(!this.enter(points[i]))
+          ||(i>0&&!this.enter(points[i-1])&&this.enter(points[i])))
+        clean.push(points[i])
+    }
+    return clean
   }
 
   find(pointa,pointb){
@@ -16,7 +30,8 @@ class Path{
     let grid=graph.grid
     pointa=grid[pointa.x][pointa.y]
     pointb=grid[pointb.x][pointb.y]
-    return astar.search(graph,pointa,pointb).map((o)=>new point.Point(o.x,o.y))
+    let path=astar.search(graph,pointa,pointb).map((o)=>new point.Point(o.x,o.y))
+    return this.clean(path)
   }
 }
 
@@ -121,8 +136,6 @@ export class MapGenerator{
     return true
   }
 
-  enter(point){return this.rooms.find((r)=>r.enter(point.x,point.y))}
-
   join(){
     let joined=this.joined
     let rooms=this.rooms
@@ -136,10 +149,7 @@ export class MapGenerator{
                                           -roomb.center().distance(a))[0]
     let b=roomb.center()
     let ways=this.ways
-    let path=this.path.find(a,b)
-    while(!(this.enter(path[0])&&!this.enter(path[1]))) path.shift()
-    while(!(!this.enter(path[path.length-2])&&this.enter(path[path.length-1]))) path.pop()
-    ways.push(...path.filter((point)=>!ways.includes(point)))
+    ways.push(...this.path.find(a,b).filter((point)=>!ways.includes(point)))
     joined.push(roomb)
     return true
   }
