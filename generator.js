@@ -63,6 +63,12 @@ class MapGenerator{
     }
   }
 
+  seek(x){
+    for(let y=this.height-1;y>=0;y-=1)
+      if(this.placed.find((room)=>room.enter(x,y))) return y
+    return 0
+  }
+
   fall(){
     let placed=this.placed
     let i=placed.length
@@ -80,7 +86,8 @@ class MapGenerator{
       this.turn()
       let p=rpg.pick(this.placed)
       let x=p.point.x
-      x=rpg.roll(x-r.width+1,x+p.width-1)
+      let xs=Array.from(new Array(3),()=>rpg.roll(x-r.width+1,x+p.width-1))
+      x=xs.reduce((x1,x2)=>this.seek(x1)<this.seek(x2)?x1:x2)
       r.place(new point.Point(x,this.height-r.height))
       if(placed.find((room)=>room.bump(r))) throw "can't place new room"
       return true
@@ -195,7 +202,7 @@ function delay(){return new Promise((done)=>setTimeout(done,100))}
 
 export async function ready(){
   let generator=false
-  let nrooms=20
+  let nrooms=rpg.dice(5,6)
   while(!generator){
     let rooms=[]
     while(rooms.length<nrooms) rooms.push(new Room(size(),size()))
