@@ -121,6 +121,8 @@ export class MapGenerator{
     return true
   }
 
+  enter(point){return this.rooms.find((r)=>r.enter(point.x,point.y))}
+
   join(){
     let joined=this.joined
     let rooms=this.rooms
@@ -134,29 +136,16 @@ export class MapGenerator{
                                           -roomb.center().distance(a))[0]
     let b=roomb.center()
     let ways=this.ways
-    ways.push(...this.path.find(a,b).filter((point)=>!ways.includes(point)))
+    let path=this.path.find(a,b)
+    while(!(this.enter(path[0])&&!this.enter(path[1]))) path.shift()
+    while(!(!this.enter(path[path.length-2])&&this.enter(path[path.length-1]))) path.pop()
+    ways.push(...path.filter((point)=>!ways.includes(point)))
     joined.push(roomb)
     return true
-  }
-
-  clean(){
-    let ways=this.ways
-    for(let point of Array.from(ways)){
-      let x=point.x
-      let y=point.y
-      let r=this.rooms.find((r)=>r.enter(x,y))
-      if(!r) continue
-      let p=r.point
-      let roomx=p.x
-      let roomy=p.y
-      if(x==roomx||x==roomx+r.width-1||y==roomy||y==roomy+r.height-1) continue
-      ways.splice(ways.indexOf(point),1)
-    }
   }
 
   *make(){
     while(this.fall()) yield
     while(this.join()) yield
-    this.clean()
   }
 }
