@@ -1,0 +1,19 @@
+<!doctype HTML>
+<title>Falling-maps show-case</title>
+
+<div id='map'>
+  <template id='cell'><div class='cell'></div></template>
+</div>
+
+<script type='module'>
+  import * as generator from './generator.js'
+  generator.ready()
+</script>
+
+<style>
+  #map{
+    display:grid;
+    justify-content:center;
+  }
+  #map .cell{border:dotted 1px grey;}
+</style>
