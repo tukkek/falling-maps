@@ -21,11 +21,12 @@ export class Room{
     return new point.Point(x,y)
   }
 
-  enter(x,y){
+  enter(x,y,margin=0){
     let p=this.point
     let roomx=p.x
     let roomy=p.y
-    return roomx-4<=x&&x<roomx+this.width+4&&roomy-4<=y&&y<roomy+this.height+4
+    return roomx-margin<=x&&x<roomx+this.width+margin
+            &&roomy-margin<=y&&y<roomy+this.height+margin
   }
 
   bump(room){
@@ -33,7 +34,7 @@ export class Room{
     let bx=b.x
     let by=b.y
     for(let x=bx;x<bx+room.width;x+=1) for(let y=by;y<by+room.height;y+=1)
-      if(this.enter(x,y)) return true
+      if(this.enter(x,y,3)) return true
     return false
   }
 }
@@ -46,7 +47,7 @@ class MapGenerator{
     this.placed=[]
     this.center=new point.Point(Math.round(width/2),Math.round(height/2))
     this.joined=[]
-    this.ways=[]//ways and rooms overlap so clients can use data to create doors for example
+    this.ways=[]//ways that over-lap with rooms are meant to be doors
   }
 
   turn(){
@@ -117,6 +118,27 @@ class MapGenerator{
     joined.push(roomb)
     return true
   }
+1
+  clean(){
+    let ways=this.ways
+    for(let point of Array.from(ways)){
+      let x=point.x
+      let y=point.y
+      let r=this.rooms.find((r)=>r.enter(x,y))
+      if(!r) continue
+      let p=r.point
+      let roomx=p.x
+      let roomy=p.y
+      if(x==roomx||x==roomx+r.width-1||y==roomy||y==roomy+r.height-1) continue
+      ways.splice(ways.indexOf(point),1)
+    }
+  }
+
+  *make(){
+    while(this.fall()) yield
+    while(this.join()) yield
+    this.clean()
+  }
 }
 
 var cells=[]
@@ -155,11 +177,17 @@ async function draw(generator,skip=true){
   filled.clear()
   for(let room of generator.rooms.filter((r)=>r.point.x!=-1)){
     let p=room.point
-    for(let x=p.x;x<p.x+room.width;x+=1) for(let y=p.y;y<p.y+room.height;y+=1)
-      filled.add(cells[x][y])
+    for(let x=p.x;x<p.x+room.width;x+=1) for(let y=p.y;y<p.y+room.height;y+=1){
+      let c=cells[x][y]
+      filled.add(c)
+      c.style['background-color']='black'
+    }
   }
-  for(let point of generator.ways) filled.add(cells[point.x][point.y])
-  for(let cell of filled) cell.style['background-color']='black'
+  for(let point of generator.ways){
+    let c=cells[point.x][point.y]
+    filled.add(c)
+    c.style['background-color']='grey'
+  }
   await delay()
   return Promise.resolve()
 }
@@ -175,7 +203,6 @@ export async function ready(){
     generator=new MapGenerator(200,200,rooms)
   }
   place(generator)
-  while(generator.fall()) await draw(generator)
-  while(generator.join()) await draw(generator)
+  for(let step of generator.make()) await draw(generator)
   draw(generator,false)
 }
