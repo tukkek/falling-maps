@@ -1,8 +1,27 @@
 import * as rpg from './libraries/rpg.js'
 import * as point from './libraries/point.js'
+import './libraries/astar.js'
 
 const INCREMENT=3
 const CELL=document.querySelector('template#cell').content.children[0]
+
+class Path{
+  constructor(generator){
+    let w=generator.width
+    let h=generator.height
+    let graph=Array.from(new Array(w),()=>new Array(h))
+    for(let x=0;x<w;x+=1) for(let y=0;y<h;y+=1) graph[x][y]=1
+    this.graph=new Graph(graph)
+  }
+
+  find(pointa,pointb){
+    let graph=this.graph
+    let grid=graph.grid
+    pointa=grid[pointa.x][pointa.y]
+    pointb=grid[pointb.x][pointb.y]
+    return astar.search(graph,pointa,pointb).map((o)=>new point.Point(o.x,o.y))
+  }
+}
 
 //can be extended or its duck-typed
 export class Room{
@@ -48,6 +67,7 @@ class MapGenerator{
     this.center=new point.Point(Math.round(width/2),Math.round(height/2))
     this.joined=[]
     this.ways=[]//ways that over-lap with rooms are meant to be doors
+    this.path=new Path(this)
   }
 
   turn(){
@@ -113,14 +133,7 @@ class MapGenerator{
                                           -roomb.center().distance(a))[0]
     let b=roomb.center()
     let ways=this.ways
-    while(!a.equals(b)){
-      if(a.x<b.x) a.x+=1
-      else if(a.x>b.x) a.x-=1
-      if(a.y<b.y) a.y+=1
-      else if(a.y>b.y) a.y-=1
-      if(!ways.find((point)=>point.equals(a)))
-        ways.push(a.clone())
-    }
+    ways.push(...this.path.find(a,b).filter((point)=>!ways.includes(point)))
     joined.push(roomb)
     return true
   }
