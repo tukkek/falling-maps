@@ -95,13 +95,27 @@ export class MapGenerator{
     this.path=new Path(this)
     this.margin=3
     this.turns=[1,1]
-    this.targets=3
+    this.targets=Number.MAX_VALUE
   }
 
   seek(x){
     for(let y=this.height-1;y>=0;y-=1)
       if(this.placed.find((room)=>room.enter(x,y))) return y
-    return 0
+    return Number.MAX_VALUE
+  }
+
+  //mostly random regardless of targets as can't distinguish between a gap that fits or not
+  aim(room){
+    let range=this.placed.map((room)=>[room.x,room.x+room.width])
+                .flat().sort((a,b)=>a<b?-1:+1)
+    let m=this.margin
+    let w=room.width
+    range=[Math.max(range[0]-w-m+1,0),
+            Math.min(range[range.length-1]+m-1,this.width-w)]
+    let targets=[]
+    for(let x=range[0];x<range[1];x+=1) targets.push(x)
+    targets=rpg.shuffle(targets).slice(0,this.targets)
+    return targets.reduce((x1,x2)=>this.seek(x1)<this.seek(x2)?x1:x2)
   }
 
   fall(){
@@ -122,11 +136,7 @@ export class MapGenerator{
       let turns=this.turns
       turns=rpg.roll(turns[0],turns[1])
       for(let i=0;i<turns;i+=1) for(let room of this.placed) room.turn(this.width,this.height)
-      let p=rpg.pick(this.placed)
-      let x=p.point.x
-      let xs=Array.from(new Array(this.targets),()=>rpg.roll(x-r.width+1,x+p.width-1))
-      x=xs.reduce((x1,x2)=>this.seek(x1)<this.seek(x2)?x1:x2)
-      r.place(new point.Point(x,this.height-r.height))
+      r.place(new point.Point(this.aim(r),this.height-r.height))
       if(placed.find((room)=>room.bump(r,m))) throw "can't place new room"
       return true
     }

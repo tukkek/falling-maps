@@ -1,7 +1,7 @@
 # Falling maps
 *Generator for dungeon and urban maps*.
 
-Falling Maps uses a method that resembles the game-play of falling-block titles such as Tetris and Columns to generate lay-outs that can fit multiple scenarios like dungeon and city maps. It can create 20-room maps in 10 miliseconds and supports demonstration and extensibility.
+Falling Maps uses a method that resembles the game-play of falling-block titles such as Tetris and Columns to generate lay-outs that can fit multiple scenarios like dungeon and city maps. It can create 20-room maps in 20 miliseconds and supports demonstration and extensibility.
 
 See a show-case at https://tukkek.github.io/falling-maps/.
 
@@ -43,7 +43,7 @@ let map=new generator.MapGenerator(/*...*/)
 
 map.margin=3//minimum distance between rooms
 map.turns=[1,1]//turns to take after placing rooms, [0,3] would be 0; 90; 180; or 270 degrees
-map.targets=3//aim this many times to try to fit rooms inside gaps to create denser maps
+map.targets=Number.MAX_VALUE//aim this many times to try to fill gaps to create denser maps
 
 //any one of these can be used to create a map:
 for(let step of map.watch()) continue //yields once for each generation-step taken
