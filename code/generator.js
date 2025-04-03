@@ -95,14 +95,14 @@ export class MapGenerator{
     this.path=new Path(this)
     this.margin=3
     this.turns=[1,1]
-    this.targets=Number.MAX_VALUE
+    this.targets=3
     this.border=1
   }
 
   seek(x){
     for(let y=this.height-1;y>=0;y-=1)
       if(this.placed.find((room)=>room.enter(x,y))) return y
-    return Number.MAX_VALUE
+    return 0
   }
 
   //mostly random regardless of targets as can't distinguish between a gap that fits or not
