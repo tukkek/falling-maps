@@ -35,7 +35,6 @@ class Path{
   }
 }
 
-//can be extended or its duck-typed
 export class Room{
   constructor(width,height){
     this.width=width
@@ -68,11 +67,15 @@ export class Room{
       if(this.enter(x,y,margin)) return true
     return false
   }
+
+  get x(){return this.point.x}
+
+  get y(){return this.point.y}
 }
 
 export class MapGenerator{
   constructor(width,height,rooms=[]){
-    this.rooms=rpg.shuffle(rooms)
+    this.rooms=rpg.shuffle(rooms,true)
     this.width=width
     this.height=height
     this.placed=[]
@@ -160,4 +163,12 @@ export class MapGenerator{
   }
 
   make(){for(let step of this.watch()) continue}
+
+  time(){return new Date().getTime()}
+
+  clock(){
+    let t=this.time()
+    this.make()
+    return this.time()-t
+  }
 }
