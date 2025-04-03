@@ -16,6 +16,7 @@ function size(){
 
 function place(generator){
   let m=document.querySelector('#map')
+  m.innerHTML=''
   let w=generator.width
   let h=generator.height
   let px=rpg.round(window.innerHeight/(Math.max(w,h)))
@@ -66,6 +67,9 @@ export async function ready(){
     generator=new generatorm.MapGenerator(200,200,rooms)
   }
   place(generator)
-  for(let step of generator.watch()) await draw(generator)
+  for(let step of generator.watch()){
+    if(step==generator.pack) place(generator)
+    await draw(generator,step==generator.fall)
+  }
   draw(generator,false)
 }

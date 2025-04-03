@@ -44,11 +44,12 @@ let map=new generator.MapGenerator(/*...*/)
 map.margin=3//minimum distance between rooms
 map.turns=[1,1]//turns to take after placing rooms, [0,3] would be 0; 90; 180; or 270 degrees
 map.targets=Number.MAX_VALUE//aim this many times to try to fill gaps to create denser maps
+map.border=1//number of empty cells to surround the generated map with
 
 //any one of these can be used to create a map:
-for(let step of map.watch()) continue //yields once for each generation-step taken
-map.make() //returns after the map has been generated
-map.clock() //same as Make but also returns the number of miliseconds elapsed
+for(let step of map.watch()) continue//yields once for each generation-step taken
+map.make()//returns after the map has been generated
+map.clock()//same as Make but also returns the number of miliseconds elapsed
 
 /* Rooms */
 let room=map.rooms[0]//the internal Rooms field does not preserve the original room order

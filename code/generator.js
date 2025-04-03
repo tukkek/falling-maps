@@ -96,6 +96,7 @@ export class MapGenerator{
     this.margin=3
     this.turns=[1,1]
     this.targets=Number.MAX_VALUE
+    this.border=1
   }
 
   seek(x){
@@ -166,8 +167,10 @@ export class MapGenerator{
   }
 
   *watch(){
-    while(this.fall()) yield
-    while(this.join()) yield
+    while(this.fall()) yield this.fall
+    this.pack(this.border)
+    yield this.pack
+    while(this.join()) yield this.join
   }
 
   make(){for(let step of this.watch()) continue}
@@ -178,5 +181,17 @@ export class MapGenerator{
     let t=this.time()
     this.make()
     return this.time()-t
+  }
+
+  pack(border){
+    let rooms=this.rooms
+    let left=rooms.map((r)=>r.x).reduce((x1,x2)=>x1<x2?x1:x2)
+    let bottom=rooms.map((r)=>r.y).reduce((y1,y2)=>y1<y2?y1:y2)
+    for(let p of [rooms.map((r)=>r.point),this.ways].flat()){
+      p.x=p.x-left+border
+      p.y=p.y-bottom+border
+    }
+    this.width=rooms.map((r)=>r.x+r.width).reduce((x1,x2)=>x1>x2?x1:x2)+border
+    this.height=rooms.map((r)=>r.y+r.height).reduce((y1,y2)=>y1>y2?y1:y2)+border
   }
 }
