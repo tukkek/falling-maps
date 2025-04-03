@@ -84,7 +84,7 @@ export class MapGenerator{
     this.ways=[]//ways that over-lap with rooms are meant to be doors
     this.path=new Path(this)
     this.margin=3
-    this.turns=[0,3]
+    this.turns=[1,1]
   }
 
   turn(){
