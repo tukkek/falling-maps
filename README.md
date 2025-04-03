@@ -8,9 +8,9 @@ See a show-case at https://tukkek.github.io/falling-maps/.
 # Set-up
 
 You can set-up the library in one of these ways:
-* As a Git clone (`git clone --depth 1 https://github.com/tukkek/falling-maps/`).
-* As a Git module (`git submodule https://github.com/tukkek/falling-maps/`).
-* As a package (https://github.com/tukkek/falling-maps/archive/refs/heads/main.zip).
+* Download https://github.com/tukkek/falling-maps/archive/refs/heads/main.zip.
+* `git clone https://github.com/tukkek/falling-maps/ libraries/falling-maps/`.
+* `git submodule add https://github.com/tukkek/falling-maps/ libraries/falling-maps/`.
 
 # Usage
 
