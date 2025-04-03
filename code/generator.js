@@ -1,6 +1,6 @@
-import * as rpg from './libraries/rpg.js'
-import * as point from './libraries/point.js'
-import './libraries/astar.js'
+import * as rpg from '../libraries/rpg.js'
+import * as point from '../libraries/point.js'
+import '../libraries/astar.js'
 
 class Path{
   constructor(generator){

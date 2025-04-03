@@ -1,4 +1,4 @@
-import * as generatorm from './generator.js'
+import * as generatorm from './code/generator.js'
 import * as rpg from './libraries/rpg.js'
 
 const INCREMENT=3
