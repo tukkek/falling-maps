@@ -8,7 +8,7 @@ See a show-case at https://tukkek.github.io/falling-maps/.
 # Set-up
 
 You can set-up the library in one of these ways:
-* Download https://github.com/tukkek/falling-maps/archive/refs/heads/main.zip.
+* Down-load https://github.com/tukkek/falling-maps/archive/refs/heads/main.zip.
 * `git clone https://github.com/tukkek/falling-maps/ libraries/falling-maps/`.
 * `git submodule add https://github.com/tukkek/falling-maps/ libraries/falling-maps/`.
 
@@ -31,14 +31,14 @@ for(let room of rooms) console.log('Room:',room.x,room.y,room.width,room.height)
 console.log('Walk-ways:',map.ways.map((point)=>`${point.x}:${point.y}`))
 ```
 
-Ignore the ways and use only room data to create an out-door area such as a town or city. Some of the way-points are located inside rooms, on their borders as they are meant to be doors.
+Ignore the ways and use only room data to create an out-door area such as a city or camp-site. Some of the way-points are located inside rooms, on their borders as they are meant to be doors.
 
 Note that besides the rooms, the generator takes width and height parameters. This is the size of the over-all map and needs to be big enough to allow for all internal operations during the generation process. If you get errors creating your map, raise these values suitably.
 
 ## Fields and methods
 
 ```js
-//generator
+/* generator */
 let map=new generator.MapGenerator(/*...*/)
 
 map.margin=3//minimum distance between rooms
@@ -49,11 +49,11 @@ for(let step of map.watch()) continue //yields once for each generation-step tak
 map.make() //returns after the map has been generated
 map.clock() //same as Make but also returns the number of miliseconds elapsed
 
-//rooms
+/* rooms */
 let room=map.rooms[0]//the internal Rooms field does not preserve the original room order
-room.enter(10,10,0)//true if point 10:10 is inside it, optional 0 counts extra margins too
+room.enter(10,10,3)//true if point 10:10 is inside, 3 considers extra room margins (optional)
 ```
 
-## Extension
+## Extensibility
 
-The library classes can be extended to either change their generation or add custom behavior. For example: to add extra steps after `MapGeneration` is over to your liking; or to add your own functionality for `Room`s to be used client-side for your own convenienece.
+The library classes can be extended to either change their generation or add custom behavior. For example: to add extra steps  to your liking after `MapGeneration` is over; or to add your own functionality for `Room`s to be used client-side for your own convenience.
