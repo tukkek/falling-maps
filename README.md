@@ -58,4 +58,4 @@ room.enter(10,10,3)//true if point 10:10 is inside, 3 considers extra room margi
 
 ## Extensibility
 
-The library classes can be extended to either change their generation or add custom behavior. For example: to add extra steps  to your liking after `MapGeneration` is over; or to add your own functionality for `Room`s to be used client-side for your own convenience.
+The library classes can be extended to either change the generation or add custom behavior. For example: to add extra steps  to your liking after `MapGeneration` is over; or to add your own functionality for `Room`s to be used client-side for your own convenience.
