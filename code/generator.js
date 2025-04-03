@@ -85,6 +85,7 @@ export class MapGenerator{
     this.path=new Path(this)
     this.margin=3
     this.turns=[1,1]
+    this.targets=3
   }
 
   turn(){
@@ -126,7 +127,7 @@ export class MapGenerator{
       for(let i=0;i<turns;i+=1) this.turn()
       let p=rpg.pick(this.placed)
       let x=p.point.x
-      let xs=Array.from(new Array(3),()=>rpg.roll(x-r.width+1,x+p.width-1))
+      let xs=Array.from(new Array(this.targets),()=>rpg.roll(x-r.width+1,x+p.width-1))
       x=xs.reduce((x1,x2)=>this.seek(x1)<this.seek(x2)?x1:x2)
       r.place(new point.Point(x,this.height-r.height))
       if(placed.find((room)=>room.bump(r,m))) throw "can't place new room"

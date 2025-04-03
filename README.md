@@ -38,18 +38,19 @@ Note that besides the rooms, the generator takes width and height parameters. Th
 ## Fields and methods
 
 ```js
-/* generator */
+/* Generator */
 let map=new generator.MapGenerator(/*...*/)
 
 map.margin=3//minimum distance between rooms
 map.turns=[1,1]//turns to take after placing rooms, [0,3] would be 0; 90; 180; or 270 degrees
+map.targets=3//aim this many times to try to fit rooms inside gaps to create denser maps
 
 //any one of these can be used to create a map:
 for(let step of map.watch()) continue //yields once for each generation-step taken
 map.make() //returns after the map has been generated
 map.clock() //same as Make but also returns the number of miliseconds elapsed
 
-/* rooms */
+/* Rooms */
 let room=map.rooms[0]//the internal Rooms field does not preserve the original room order
 room.enter(10,10,3)//true if point 10:10 is inside, 3 considers extra room margins (optional)
 ```
