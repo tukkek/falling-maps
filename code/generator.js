@@ -71,6 +71,16 @@ export class Room{
   get x(){return this.point.x}
 
   get y(){return this.point.y}
+
+  turn(mapwidth,mapheight){
+    let w=this.width
+    let h=this.height
+    let x=this.y
+    let y=mapheight-this.x-w
+    this.point=new point.Point(x,y)
+    this.width=h
+    this.height=w
+  }
 }
 
 export class MapGenerator{
@@ -86,19 +96,6 @@ export class MapGenerator{
     this.margin=3
     this.turns=[1,1]
     this.targets=3
-  }
-
-  turn(){
-    for(let room of this.placed){
-      let p=room.point
-      let x=p.x
-      let y=p.y
-      room.point=new point.Point(y,x)
-      let w=room.width
-      let h=room.height
-      room.width=h
-      room.height=w
-    }
   }
 
   seek(x){
@@ -124,7 +121,7 @@ export class MapGenerator{
     if(r.point.x==-1){
       let turns=this.turns
       turns=rpg.roll(turns[0],turns[1])
-      for(let i=0;i<turns;i+=1) this.turn()
+      for(let i=0;i<turns;i+=1) for(let room of this.placed) room.turn(this.width,this.height)
       let p=rpg.pick(this.placed)
       let x=p.point.x
       let xs=Array.from(new Array(this.targets),()=>rpg.roll(x-r.width+1,x+p.width-1))
