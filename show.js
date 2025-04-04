@@ -3,6 +3,7 @@ import * as rpg from './libraries/rpg.js'
 
 const INCREMENT=3
 const CELL=document.querySelector('template#cell').content.children[0]
+const DEBUG=new URLSearchParams(document.location.search).has('debug')
 
 var cells=[]
 var filled=new Set()
@@ -66,10 +67,15 @@ export async function ready(){
     while(rooms.length<nrooms) rooms.push(new generatorm.Room(size(),size()))
     generator=new generatorm.MapGenerator(200,200,rooms)
   }
-  place(generator)
-  for(let step of generator.watch()){
-    if(step==generator.pack) place(generator)
-    await draw(generator,step==generator.fall)
+  if(DEBUG){
+    generator.make()
+    place(generator)
+  }else{
+    place(generator)
+    for(let step of generator.watch()){
+      if(step==generator.pack) place(generator)
+      await draw(generator,step==generator.fall)
+    }
   }
   draw(generator,false)
 }
