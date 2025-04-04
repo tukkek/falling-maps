@@ -1,9 +1,38 @@
 import * as generator from './generator.js'
 import * as pointm from '../libraries/point.js'
+import * as rpg from '../libraries/rpg.js'
+
+class Room extends generator.Room{
+  constructor(width,height){
+    super(width,height)
+    this.floors=[]
+  }
+
+  expand(generator){
+    let floors=this.floors
+    for(let point of Array.from(floors)){
+      let diamond=[new pointm.Point(point.x+1,point.y),
+                    new pointm.Point(point.x,point.y+1),
+                    new pointm.Point(point.x-1,point.y),
+                    new pointm.Point(point.x,point.y-1)]
+      for(let e of diamond) if(e.validate([0,generator.width],[0,generator.height]))
+        if(!floors.find((f)=>f.equals(e))) floors.push(e)
+    }
+  }
+
+  floor(generator){
+    let floors=this.floors
+    let x=this.x
+    let y=this.y
+    let margin=1
+    let ranges=[[x-margin,x+this.width+margin],[y-margin,y+this.height+margin]]
+    floors.push(...pointm.range(ranges[0],ranges[1]))
+  }
+}
 
 export class Station extends generator.MapGenerator{
   constructor(width,height,rooms){
-    super(width,height,rooms)
+    super(width,height,rooms.map((r)=>new Room(r.width,r.height)))
     this.hub=false
     this.floors=[]
     this.graph=Array.from(new Array(width),()=>new Array(height).fill(0))
@@ -65,20 +94,23 @@ export class Station extends generator.MapGenerator{
     return true
   }
 
+  select(array){
+    let i=0
+    while(i<array.length-1&&rpg.chance(2)) i+=1
+    return array[i]
+  }
+
   floor(){
+    let rooms=this.rooms
+    for(let room of rooms) room.floor(this)
     let floors=this.floors
-    floors.push(...this.rooms.map((room)=>room.center()))
+    floors.push(...rooms.map((r)=>r.floors).flat())
     while(!this.done()){
-      for(let point of Array.from(floors)){
-        let expand=[new pointm.Point(point.x+1,point.y),
-                    new pointm.Point(point.x,point.y+1),
-                    new pointm.Point(point.x-1,point.y),
-                    new pointm.Point(point.x,point.y-1)]
-        for(let e of expand)
-          if(e.validate([0,this.width],[0,this.height]))
-            if(!floors.find((f)=>f.equals(e)))
-              floors.push(e)
-      }
+      rooms.sort((rooma,roomb)=>rooma.floors.length-roomb.floors.length)
+      this.select(rooms).expand(this)
+      floors.splice(0,floors.length)
+      for(let point of rooms.map((room)=>room.floors).flat())
+        if(!floors.find((f)=>f.equals(point))) floors.push(point)
     }
   }
 }
