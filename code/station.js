@@ -1,6 +1,15 @@
 import * as generator from './generator.js'
+import * as pointm from '../libraries/point.js'
 
 export class Station extends generator.MapGenerator{
+  constructor(width,height,rooms){
+    super(width,height,rooms)
+    this.hub=false
+    this.floors=[]
+    this.graph=Array.from(new Array(width),()=>new Array(height).fill(0))
+    this.border=10
+  }
+
   close(point,rooms){
     return rooms.reduce((a,b)=>(Math.abs(a.point.x-point.x)+Math.abs(a.point.y-point.y))
                                 <(Math.abs(b.point.x-point.x)+Math.abs(b.point.y-point.y))
@@ -34,12 +43,42 @@ export class Station extends generator.MapGenerator{
 
   join(){
     let rooms=Array.from(this.rooms)
-    let c=this.close(this.center,rooms).point
+    let hub=this.close(this.center,rooms)
+    this.hub=hub
+    let c=hub.center()
     rooms.sort((rooma,roomb)=>rooma.point.distance(c)-roomb.point.distance(c))
     for(let i=1;i<rooms.length;i+=1){
       let rooma=rooms[i]
       let roomb=this.close(rooma.point,rooms.slice(0,i))
-      this.connect(roomb,rooma)
+      this.connect(rooma,roomb)
+    }
+    this.floor()
+  }
+
+  done(){
+    let hub=this.hub
+    for(let point of this.floors) this.graph[point.x][point.y]=1
+    for(let r of this.rooms) if(r!=hub){
+      let p=this.path.find(hub.center(),r.center(),new Graph(this.graph),false)
+      if(p.length==0) return false
+    }
+    return true
+  }
+
+  floor(){
+    let floors=this.floors
+    floors.push(...this.rooms.map((room)=>room.center()))
+    while(!this.done()){
+      for(let point of Array.from(floors)){
+        let expand=[new pointm.Point(point.x+1,point.y),
+                    new pointm.Point(point.x,point.y+1),
+                    new pointm.Point(point.x-1,point.y),
+                    new pointm.Point(point.x,point.y-1)]
+        for(let e of expand)
+          if(e.validate([0,this.width],[0,this.height]))
+            if(!floors.find((f)=>f.equals(e)))
+              floors.push(e)
+      }
     }
   }
 }

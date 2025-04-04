@@ -25,13 +25,14 @@ class Path{
     return clean
   }
 
-  find(pointa,pointb){
-    let graph=this.graph
+  find(pointa,pointb,graph=false,clean=true){
+    if(!graph) graph=this.graph
     let grid=graph.grid
     pointa=grid[pointa.x][pointa.y]
     pointb=grid[pointb.x][pointb.y]
     let path=astar.search(graph,pointa,pointb).map((o)=>new point.Point(o.x,o.y))
-    return this.clean(path)
+    if(clean) path=this.clean(path)
+    return path
   }
 }
 

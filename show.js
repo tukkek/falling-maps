@@ -40,6 +40,12 @@ async function draw(generator,skip=true){
   if(skip&&steps%5!=0) return Promise.resolve()
   for(let cell of filled) cell.style['background-color']=''
   filled.clear()
+  let floors=generator.floors
+  if(floors) for(let point of floors){
+    let c=cells[point.x][point.y]
+    filled.add(c)
+    c.style['background-color']='lightgray'
+  }
   for(let room of generator.rooms.filter((r)=>r.point.x!=-1)){
     let p=room.point
     for(let x=p.x;x<p.x+room.width;x+=1) for(let y=p.y;y<p.y+room.height;y+=1){
