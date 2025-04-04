@@ -1,7 +1,7 @@
 # Falling maps
 *Generator for dungeon and urban maps*.
 
-Falling Maps uses a method that resembles the game-play of falling-block titles such as Tetris and Columns to generate lay-outs that can fit multiple scenarios like dungeon and city maps. It can create 20-room maps in 20 miliseconds and supports demonstration and extensibility.
+Falling Maps uses a method that resembles the game-play of falling-block titles such as Tetris and Columns to generate lay-outs that can fit multiple scenarios like dungeon and city maps. It can create 20-room maps in 8 miliseconds and supports demonstration and extensibility.
 
 See a show-case at https://tukkek.github.io/falling-maps/.
 
