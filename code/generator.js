@@ -148,6 +148,13 @@ export class MapGenerator{
     return true
   }
 
+  connect(rooma,roomb){
+    let centers=[rooma,roomb].map((r)=>r.center())
+    let ways=this.ways
+    for(let point of this.path.find(centers[0],centers[1]))
+      if(!ways.find((waypoint)=>waypoint.equals(point))) ways.push(point)
+  }
+
   join(){
     let joined=this.joined
     let rooms=this.rooms
@@ -159,9 +166,7 @@ export class MapGenerator{
     let roomb=rooms.filter((r)=>!joined.includes(r))
                     .sort((rooma,roomb)=>rooma.center().distance(a)
                                           -roomb.center().distance(a))[0]
-    let b=roomb.center()
-    let ways=this.ways
-    ways.push(...this.path.find(a,b).filter((point)=>!ways.includes(point)))
+    this.connect(rooma,roomb)
     joined.push(roomb)
     return true
   }
